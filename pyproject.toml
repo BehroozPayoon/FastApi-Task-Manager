@@ -7,6 +7,10 @@ authors = ["Behrooz Payoon <Behrooz.payoon@gmail.com>"]
 [tool.poetry.dependencies]
 python = "^3.10"
 alembic = "1.7.7"
+passlib = {version = "1.7.4", extras = ["bcrypt"]}
+pydantic = {version = "1.9.1", extras = ["email"]}
+fastapi = "0.79.0"
+uvicorn = "0.18.2"
 
 [tool.poetry.dev-dependencies]
 

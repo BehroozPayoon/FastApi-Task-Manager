@@ -1,0 +1,23 @@
+version: "3"
+services:
+  app:
+    image: mrcore-auth:latest
+    networks:
+      - frontend
+      - backend
+    volumes:
+      - ./:/app
+    # command: python app/main.py 
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.mrcore-auth-secure.rule=Host(`tasks.payoon.dev`)'
+      - 'traefik.http.services.mrcore-auth.loadbalancer.server.port=8000'
+      - 'traefik.http.routers.mrcore-auth-secure.tls=true'
+      - "traefik.http.routers.mrcore-auth-secure.tls.certresolver=le"
+    env_file:
+      - ./.env
+networks:
+  frontend:
+    external: true
+  backend:
+    external: true
