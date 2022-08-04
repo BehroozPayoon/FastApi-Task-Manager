@@ -28,7 +28,7 @@ def upgrade():
             ["user_id"],
             ["users.id"],
         ),
-    sa.PrimaryKeyConstraint(["task_id", "user_id"]),
+    sa.PrimaryKeyConstraint("task_id", "user_id", name='tasks_users_pl'),
     )
 
 

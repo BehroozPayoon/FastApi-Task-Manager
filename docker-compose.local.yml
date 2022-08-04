@@ -1,19 +1,19 @@
 version: "3"
 services:
   app:
-    image: mrcore-auth:latest
+    image: task-manager:latest
     networks:
       - frontend
       - backend
     volumes:
       - ./:/app
-    # command: python app/main.py 
+    command: python app/main.py 
     labels:
       - 'traefik.enable=true'
-      - 'traefik.http.routers.mrcore-auth-secure.rule=Host(`tasks.payoon.dev`)'
-      - 'traefik.http.services.mrcore-auth.loadbalancer.server.port=8000'
-      - 'traefik.http.routers.mrcore-auth-secure.tls=true'
-      - "traefik.http.routers.mrcore-auth-secure.tls.certresolver=le"
+      - 'traefik.http.routers.taskmanager-api-secure.rule=Host(`auth.payoon.dev`)'
+      - 'traefik.http.services.taskmanager-api.loadbalancer.server.port=8000'
+      - 'traefik.http.routers.taskmanager-api-secure.tls=true'
+      - "traefik.http.routers.taskmanager-api-secure.tls.certresolver=le"
     env_file:
       - ./.env
 networks:

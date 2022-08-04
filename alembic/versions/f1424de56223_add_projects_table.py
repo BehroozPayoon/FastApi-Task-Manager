@@ -20,8 +20,8 @@ def upgrade():
     op.create_table('projects',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column("user_id", sa.Integer(), nullable=False),
-    sa.Column('title', sa.String(length=256), nullable=True),
-    sa.Column('description', sa.String(length=1024), nullable=False, unique=True),
+    sa.Column('title', sa.String(length=256), nullable=False),
+    sa.Column('description', sa.String(length=1024), nullable=False),
     sa.ForeignKeyConstraint(
             ["user_id"],
             ["users.id"],
