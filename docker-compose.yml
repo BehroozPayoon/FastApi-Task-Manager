@@ -1,0 +1,22 @@
+version: "3"
+services:
+  app:
+    image: task-manager:latest
+    networks:
+      - frontend
+      - backend
+    volumes:
+      - ./:/app
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.taskmanager-api-secure.rule=Host(`auth.payoon.dev`)'
+      - 'traefik.http.services.taskmanager-api.loadbalancer.server.port=8000'
+      - 'traefik.http.routers.taskmanager-api-secure.tls=true'
+      - "traefik.http.routers.taskmanager-api-secure.tls.certresolver=le"
+    env_file:
+      - ./.env
+networks:
+  frontend:
+    external: true
+  backend:
+    external: true
