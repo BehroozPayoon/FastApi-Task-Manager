@@ -18,7 +18,7 @@ def authorize_to_update_or_delete_task(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         user = kwargs['user']
-        task = crud.task.get(db=kwargs['db'], id=kwargs['task_id'])
+        task = crud.task.get(db=kwargs['db'], id=kwargs['id'])
         is_authorized = user.is_manager() or task.user_id == user.id
         if not is_authorized:
             raise NotAllowedException()

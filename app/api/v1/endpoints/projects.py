@@ -20,5 +20,5 @@ def create_project(*, project_in: ProjectCreate, db: Session = Depends(deps.get_
 
 
 @router.get('/{id}/tasks')
-async def project_tasks(project_id: int, db: Session = Depends(deps.get_db)):
-    return send_success_response(crud.project.get_tasks(db=db, project_id=project_id))
+async def project_tasks(id: int, db: Session = Depends(deps.get_db), user: User = Depends(deps.get_current_user)):
+    return send_success_response(crud.project.get_tasks(db=db, project_id=id))

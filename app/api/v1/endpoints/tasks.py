@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 
 from sqlalchemy.orm.session import Session
 from app import crud
@@ -19,10 +19,11 @@ def create_task(*, task_in: TaskCreate, db: Session = Depends(deps.get_db), user
     db_obj = crud.task.create_item(db=db, obj_in=task_in, user=user)
     return send_success_response(db_obj)
 
+
 @router.put("/{id}")
 @authorize_to_update_or_delete_task
-def update_task(*, task_id: int, obj_in: TaskUpdate, db: Session = Depends(deps.get_db), user: User = Depends(get_current_user)):
-    db_obj = crud.task.get(db=db, id=task_id)
+def update_task(*, id: int, obj_in: TaskUpdate, db: Session = Depends(deps.get_db), user: User = Depends(get_current_user)):
+    db_obj = crud.task.get(db=db, id=id)
     if db_obj is None:
         raise NotFoundException()
     db_obj = crud.task.update(db=db, db_obj=db_obj, obj_in=obj_in)
@@ -30,9 +31,7 @@ def update_task(*, task_id: int, obj_in: TaskUpdate, db: Session = Depends(deps.
 
 
 @router.delete("/{id}")
-def delete_task(*, task_id: int, db: Session = Depends(deps.get_db), user: User = Depends(get_current_user)):
-    db_obj = crud.task.get(db=db, id=task_id)
-    if db_obj is None:
-        raise NotFoundException()
-    db_obj = crud.task.remove(db=db, id=task_id)
+@authorize_to_update_or_delete_task
+def delete_task(*, id: int, db: Session = Depends(deps.get_db), user: User = Depends(get_current_user)):
+    db_obj = crud.task.remove(db=db, id=id)
     return send_success_response(db_obj)
