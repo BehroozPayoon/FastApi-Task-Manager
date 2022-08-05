@@ -3,10 +3,11 @@ from app import crud
 from app.db.session import SessionLocal
 
 from sqlalchemy.orm.session import Session
-from fastapi import Depends, HTTPException
+from fastapi import Depends
 
 from app.models.user import User
 from app.core.auth import bearer_scheme, decodeJWT
+from app.core.exceptions import NotAuthenticatedExceptiion
 
 
 def get_db() -> Generator:
@@ -22,12 +23,12 @@ def get_current_user(db: Session = Depends(get_db), token: str = Depends(bearer_
         payload = decodeJWT(token=token)
         user_id = payload["user_id"]
         if user_id is None:
-            raise HTTPException(401, "1")
+            raise NotAuthenticatedExceptiion()
         user = crud.user.get(db=db, id=user_id)
         if user is None:
-            raise HTTPException(401, "2")
+            raise NotAuthenticatedExceptiion()
         return user
     except:
-        raise HTTPException(401, "3")
+        raise NotAuthenticatedExceptiion()
 
     

@@ -5,17 +5,19 @@ from app import crud
 
 from app.crud.base import CRUDBase
 from app.models.task import Task
+from app.models.user import User
 from app.schemas.task import TaskCreate, TaskUpdate
 from app.schemas.task_user import TaskUserCreate
 
-
 class CRUDTask(CRUDBase[Task, TaskCreate, TaskUpdate]):
-    def create(self, db: Session, obj_in: TaskCreate):
+
+    def create_item(self, db: Session, obj_in: TaskCreate, user: User):
         users = crud.user.get_multi_by_ids(db=db, id_list=obj_in.user_ids)
         if len(users) != len(obj_in.user_ids):
-            raise HTTPException(400)
+            raise HTTPException(400, 'Invalid user list')
         created_data = obj_in.dict()
         created_data.pop("user_ids")
+        created_data["user_id"] = user.id
         db_obj = Task(**created_data)
         db.add(db_obj)
         db.commit()
@@ -38,17 +40,6 @@ class CRUDTask(CRUDBase[Task, TaskCreate, TaskUpdate]):
 
         db.refresh(db_obj)
         return db_obj
-    
-    # def update(self, db: Session, id: int, obj_in: TaskUpdate):
-    #     db_obj = self.get(id)
-    #     if db_obj is None:
-    #         raise HTTPException(404)
-        
-    #     update_data = obj_in.dict()
-    #     update_data.pop("user_ids")
-    #     db_obj = Task(**created_data)
-    #     db.add(db_obj)
-    #     db.commit()
 
 
 task = CRUDTask(Task)

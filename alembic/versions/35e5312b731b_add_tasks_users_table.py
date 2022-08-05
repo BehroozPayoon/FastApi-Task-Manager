@@ -23,10 +23,12 @@ def upgrade():
     sa.ForeignKeyConstraint(
             ["task_id"],
             ["tasks.id"],
+            ondelete='CASCADE'
         ),
     sa.ForeignKeyConstraint(
             ["user_id"],
             ["users.id"],
+            ondelete='CASCADE'
         ),
     sa.PrimaryKeyConstraint("task_id", "user_id", name='tasks_users_pl'),
     )

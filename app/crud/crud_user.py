@@ -1,6 +1,7 @@
 from typing import List, Optional
 
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 
 from app.crud.base import CRUDBase
 from app.models.user import User
@@ -10,7 +11,7 @@ from app.core.security import get_password_hash
 
 class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
     def find_by_username(self, db: Session, *, username: str) -> Optional[User]:
-        return db.query(User).filter(User.username == username).first()
+        return db.query(User).filter(func.lower(User.username) == username.lower()).first()
 
     def get_multi_by_ids(self, db: Session, id_list: List[int]):
         return db.query(User).filter(User.id.in_(id_list)).all()

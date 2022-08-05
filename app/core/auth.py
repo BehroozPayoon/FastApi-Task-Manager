@@ -1,11 +1,9 @@
 
 
 from typing import Optional
-from datetime import datetime, timedelta
 import time
 
-from fastapi import Request, HTTPException
-from fastapi.security import OAuth2PasswordBearer
+from fastapi import Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm.session import Session
 import jwt
@@ -14,7 +12,8 @@ from app.models.user import User
 from app.core.security import verify_password
 from app import crud
 from app.core.config import get_settings
-
+from app.core.exceptions import NotAuthenticatedExceptiion
+from app.schemas.user import User
 
 class JWTBearer(HTTPBearer):
     def __init__(self, auto_error: bool = True):
@@ -24,12 +23,12 @@ class JWTBearer(HTTPBearer):
         credentials: HTTPAuthorizationCredentials = await super(JWTBearer, self).__call__(request)
         if credentials:
             if not credentials.scheme == "Bearer":
-                raise HTTPException(status_code=403, detail="Invalid authentication scheme.")
+                raise NotAuthenticatedExceptiion()
             if not self.verify_jwt(credentials.credentials):
-                raise HTTPException(status_code=403, detail="Invalid token or expired token.")
+                raise NotAuthenticatedExceptiion()
             return credentials.credentials
         else:
-            raise HTTPException(status_code=403, detail="Invalid authorization code.")
+            raise NotAuthenticatedExceptiion()
 
     def verify_jwt(self, jwtoken: str) -> bool:
         isTokenValid: bool = False
@@ -74,3 +73,7 @@ def decodeJWT(token: str) -> dict:
         return decoded_token if decoded_token["expires"] >= time.time() else None
     except:
         return {}
+
+
+def format_user_to_show(user):
+    return User(full_name=user.full_name, username=user.username, role=user.role, id=user.id)
